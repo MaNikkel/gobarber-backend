@@ -10,9 +10,12 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@sentry/node": "^5.27.4",
+    "@sentry/tracing": "^5.27.4",
     "bcryptjs": "^2.4.3",
     "date-fns": "^2.16.1",
     "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.2",
     "pg": "^8.4.2",
@@ -21,6 +24,7 @@
     "uuidv4": "^6.2.5"
   },
   "devDependencies": {
+    "@sentry/types": "^5.27.4",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.8",
     "@types/jsonwebtoken": "^8.5.0",
