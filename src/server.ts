@@ -1,11 +1,12 @@
 import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
+import cors from 'cors';
 // import * as Sentry from '@sentry/node';
 // import * as Tracing from '@sentry/tracing';
 import routes from './routes';
 import uploadConfig from './config/upload';
-import sentryConfig from './config/sentry';
+// import sentryConfig from './config/sentry';
 import AppError from './errors/AppError';
 
 import './database';
@@ -25,7 +26,7 @@ const app = express();
 // Using handlers for tracing
 // app.use(Sentry.Handlers.requestHandler());
 // app.use(Sentry.Handlers.tracingHandler());
-
+app.use(cors());
 app.use(express.json());
 app.use('/files', express.static(uploadConfig.directory));
 app.use(routes);
