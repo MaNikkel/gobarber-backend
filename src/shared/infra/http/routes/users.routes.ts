@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import multer from 'multer';
-import uploadConfig from '../config/upload';
-import CreateUserService from '../services/CreateUserService';
-import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
+import uploadConfig from '../../../../config/upload';
+import CreateUserService from '../../../../modules/users/services/CreateUserService';
+import UpdateUserAvatarService from '../../../../modules/users/services/UpdateUserAvatarService';
 import ensureAuthenticated from '../middlewares/ensureAuthenticates';
 
 const usersRouter = Router();
@@ -13,6 +13,7 @@ usersRouter.post('/', async (req, res) => {
     const { name, email, password } = req.body;
     const createUser = new CreateUserService();
     const user = await createUser.execute({ name, email, password });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...securedUser } = user;
     return res.json(securedUser);
   } catch (err) {

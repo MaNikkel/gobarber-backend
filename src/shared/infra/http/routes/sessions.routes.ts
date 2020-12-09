@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import AuthenticateUserService from '../services/AuthenticateUserService';
+import AuthenticateUserService from '../../../../modules/users/services/AuthenticateUserService';
 
 const sessionRouter = Router();
 
@@ -8,7 +8,8 @@ sessionRouter.post('/', async (req, res) => {
   const { email, password } = req.body;
   const authenticateUser = new AuthenticateUserService();
   const { user, token } = await authenticateUser.execute({ email, password });
-  const { password: _, ...securedUser } = user;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: p, ...securedUser } = user;
   return res.json({ user: securedUser, token });
 });
 
