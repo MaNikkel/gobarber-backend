@@ -5,12 +5,12 @@ import cors from 'cors';
 import morgan from 'morgan';
 // import * as Sentry from '@sentry/node';
 // import * as Tracing from '@sentry/tracing';
-import routes from './routes';
-import uploadConfig from '../../../config/upload';
-// import sentryConfig from './config/sentry';
-import AppError from '../../errors/AppError';
+import uploadConfig from '@config/upload';
+import AppError from '@shared/errors/AppError';
+import routes from '@shared/infra/http/routes';
+// import sentryConfig from '@config/sentry';
 
-import '../typeorm';
+import '@shared/infra/typeorm';
 
 const app = express();
 
