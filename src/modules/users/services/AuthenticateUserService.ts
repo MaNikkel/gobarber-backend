@@ -1,4 +1,5 @@
 import { compare } from 'bcryptjs';
+import { injectable, inject } from 'tsyringe';
 import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
 import authConfig from '@config/auth';
@@ -15,10 +16,14 @@ interface ResponseDTO {
   token: string;
 }
 
+@injectable()
 export default class AuthenticateUserService {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  constructor(
+    @inject('UsersRepository')
+    usersRepository: IUsersRepository,
+  ) {
     this.usersRepository = usersRepository;
   }
 

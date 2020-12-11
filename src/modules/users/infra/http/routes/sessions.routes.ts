@@ -1,14 +1,13 @@
 import { Router } from 'express';
 import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
-import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
+import { container } from 'tsyringe';
 
 const sessionRouter = Router();
 
 sessionRouter.post('/', async (req, res) => {
   // throw new Error('sentry error');
   const { email, password } = req.body;
-  const usersRepository = new UsersRepository();
-  const authenticateUser = new AuthenticateUserService(usersRepository);
+  const authenticateUser = container.resolve(AuthenticateUserService);
   const { user, token } = await authenticateUser.execute({ email, password });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: p, ...securedUser } = user;

@@ -10,6 +10,7 @@ import AppError from '@shared/errors/AppError';
 import routes from '@shared/infra/http/routes';
 // import sentryConfig from '@config/sentry';
 
+import '@shared/container';
 import '@shared/infra/typeorm';
 
 const app = express();

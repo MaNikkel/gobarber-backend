@@ -1,6 +1,7 @@
 import { hash } from 'bcryptjs';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
+import { injectable, inject } from 'tsyringe';
 import IUsersRepository from '../repositories/IUsersRepository';
 
 interface RequestDTO {
@@ -8,11 +9,14 @@ interface RequestDTO {
   email: string;
   password: string;
 }
-
+@injectable()
 export default class CreateUserService {
   private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: IUsersRepository) {
+  constructor(
+    @inject('UsersRepository')
+    usersRepository: IUsersRepository,
+  ) {
     this.usersRepository = usersRepository;
   }
 
