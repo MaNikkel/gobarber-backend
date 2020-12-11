@@ -4,6 +4,7 @@ import uploadConfig from '@config/upload';
 import CreateUserService from '@modules/users/services/CreateUserService';
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
 const usersRouter = Router();
 const upload = multer(uploadConfig);
@@ -11,7 +12,8 @@ const upload = multer(uploadConfig);
 usersRouter.post('/', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const createUser = new CreateUserService();
+    const usersRepository = new UsersRepository();
+    const createUser = new CreateUserService(usersRepository);
     const user = await createUser.execute({ name, email, password });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...securedUser } = user;
@@ -26,7 +28,8 @@ usersRouter.patch(
   ensureAuthenticated,
   upload.single('avatar'),
   async (req, res) => {
-    const updateAvatar = new UpdateUserAvatarService();
+    const usersRepository = new UsersRepository();
+    const updateAvatar = new UpdateUserAvatarService(usersRepository);
     const user = await updateAvatar.execute({
       user_id: req.user.id,
       avatarFilename: req.file.filename,
