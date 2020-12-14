@@ -18,6 +18,8 @@ class UsersRepository implements IUsersRepository {
     user.name = name;
     user.password = password;
 
+    this.users.push(user);
+
     return user;
   }
 
@@ -32,7 +34,8 @@ class UsersRepository implements IUsersRepository {
   }
 
   public async save(user: User): Promise<User> {
-    this.users.push(user);
+    const findIndex = this.users.findIndex(u => u.id === user.id);
+    this.users[findIndex] = user;
     return user;
   }
 }
