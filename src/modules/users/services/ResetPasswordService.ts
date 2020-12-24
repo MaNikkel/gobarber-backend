@@ -1,6 +1,6 @@
-// import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-// import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
+import { isAfter, addHours } from 'date-fns';
+
 import { injectable, inject } from 'tsyringe';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 import IUsersRepository from '../repositories/IUsersRepository';
@@ -40,6 +40,14 @@ export default class ResetPasswordService {
     if (!user) {
       throw new AppError('user not found with given id');
     }
+
+    const tokenCreatedAt = userToken.created_at;
+    const compareDate = addHours(tokenCreatedAt, 2);
+
+    if (isAfter(Date.now(), compareDate)) {
+      throw new AppError('expired token');
+    }
+
     user.password = await this.hashProvider.generateHash(password);
     this.usersRepository.save(user);
   }
