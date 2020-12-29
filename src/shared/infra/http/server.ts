@@ -36,6 +36,7 @@ app.use(routes);
 
 // Global exception handler
 app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
+  console.log(err.message);
   if (err instanceof AppError) {
     // Sentry.captureEvent(err);
     return res.status(err.statusCode).json({
