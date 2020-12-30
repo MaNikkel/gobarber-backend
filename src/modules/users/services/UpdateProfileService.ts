@@ -34,5 +34,37 @@ export default class UpdateProfileService {
     name,
     password,
     old_password,
-  }: RequestDTO): Promise<void> {}
+  }: RequestDTO): Promise<User> {
+    const user = await this.usersRepository.findById(user_id);
+    if (!user) {
+      throw new AppError('User not found');
+    }
+
+    const userWithUpdatedEmail = await this.usersRepository.findByEmail(email);
+
+    if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user_id) {
+      throw new AppError('Email already in use');
+    }
+
+    if (password) {
+      if (!old_password) {
+        throw new AppError('old password missing');
+      }
+
+      const oldPasswordMatch = await this.hashProvider.compareHash(
+        old_password,
+        user.password,
+      );
+
+      if (!oldPasswordMatch) {
+        throw new AppError('incorect old password');
+      }
+      user.password = await this.hashProvider.generateHash(password);
+    }
+
+    user.name = name;
+    user.email = email;
+
+    return this.usersRepository.save(user);
+  }
 }

@@ -3,7 +3,6 @@ import 'reflect-metadata';
 import AppError from '@shared/errors/AppError';
 import UpdateProfileService from './UpdateProfileService';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
-import FakeUserTokensRepository from '../repositories/fakes/FakeUserTokensRepository';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 
 let fakeUsersRepository: FakeUsersRepository;
@@ -14,104 +13,100 @@ describe('ResetPasswordService', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository();
     fakeHashProvider = new FakeHashProvider();
-    resetPassword = new ResetPasswordService(
+    updateProfile = new UpdateProfileService(
       fakeUsersRepository,
       fakeHashProvider,
     );
   });
 
-  it('should be able to reset the password', async () => {
+  it('should be able to update profile', async () => {
     const user = await fakeUsersRepository.create({
-      email: 'teste@teste.com',
-      name: 'Teste da Silva',
-      password: '123456',
-    });
-
-    const { token } = await fakeUserTokensRepository.generate(user.id);
-
-    const userReset = await fakeUsersRepository.findById(user.id);
-
-    await resetPassword.execute({
+      name: 'John Doe',
+      email: 'johndoe@email.com',
       password: '123123',
-      token,
     });
 
-    expect(userReset?.password).toBe('123123');
+    const updatedUser = await updateProfile.execute({
+      email: 'johndow2@emnail.com',
+      name: 'John Doe Doe',
+      user_id: user.id,
+    });
+
+    expect(updatedUser.name).toBe('John Doe Doe');
+    expect(updatedUser.email).toBe('johndow2@emnail.com');
   });
 
-  it('should be able to hash the password', async () => {
-    const generateHash = jest.spyOn(fakeHashProvider, 'generateHash');
-
-    const user = await fakeUsersRepository.create({
-      email: 'teste@teste.com',
-      name: 'Teste da Silva',
-      password: '123456',
+  it('should not be able to update email to an alredy taken email', async () => {
+    await fakeUsersRepository.create({
+      name: 'John Doe 2',
+      email: 'johndow2@emnail.com',
+      password: '135798534',
     });
 
-    const { token } = await fakeUserTokensRepository.generate(user.id);
-
-    await resetPassword.execute({
+    const user = await fakeUsersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@email.com',
       password: '123123',
-      token,
     });
 
-    expect(generateHash).toHaveBeenCalled();
+    await expect(
+      updateProfile.execute({
+        email: 'johndow2@emnail.com',
+        name: 'John Doe Doe',
+        user_id: user.id,
+      }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should not be able to reset with missing token', async () => {
+  it('should be able to update the password', async () => {
     const user = await fakeUsersRepository.create({
-      email: 'teste@teste.com',
-      name: 'Teste da Silva',
+      name: 'John Doe',
+      email: 'johndoe@email.com',
+      password: '123123',
+    });
+
+    const updatedUser = await updateProfile.execute({
+      email: 'johndow2@emnail.com',
+      name: 'John Doe Doe',
+      user_id: user.id,
       password: '123456',
+      old_password: '123123',
     });
 
-    const { token } = await fakeUserTokensRepository.generate(user.id);
+    expect(updatedUser.password).toBe('123456');
+  });
 
-    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
-      const customDate = new Date();
-
-      return customDate.setHours(customDate.getHours() + 3);
+  it('should not be able to update the password due to missing old password', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@email.com',
+      password: '123123',
     });
 
     await expect(
-      resetPassword.execute({
-        token,
-        password: '123123',
+      updateProfile.execute({
+        email: 'johndow2@emnail.com',
+        name: 'John Doe Doe',
+        user_id: user.id,
+        password: '123456',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('should not be able to reset with missing user', async () => {
-    const { token } = await fakeUserTokensRepository.generate(
-      'non-existing-user',
-    );
+  it('should not be able to update the password due to wrong old password', async () => {
+    const user = await fakeUsersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@email.com',
+      password: '123123',
+    });
 
     await expect(
-      resetPassword.execute({
-        token,
-        password: '123123',
-      }),
-    ).rejects.toBeInstanceOf(AppError);
-  });
-
-  it('should not be reset password aftes 2h', async () => {
-    await expect(
-      resetPassword.execute({
-        token: 'non-exeisting',
-        password: '123123',
-      }),
-    ).rejects.toBeInstanceOf(AppError);
-  });
-
-  it('should not be able to reset with missing user', async () => {
-    const { token } = await fakeUserTokensRepository.generate(
-      'non-existing-user',
-    );
-
-    await expect(
-      resetPassword.execute({
-        token,
-        password: '123123',
+      updateProfile.execute({
+        email: 'johndow2@emnail.com',
+        name: 'John Doe Doe',
+        user_id: user.id,
+        password: '123456',
+        old_password: 'asdfasdf',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
