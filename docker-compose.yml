@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+  gobarber_postgres:
+    image: postgres
+    restart: always
+    ports: 5432
+    environment:
+      POSTGRES_PASSWORD: docker
+  gobarber_mongo:
+    image: mongo
+    restart: always
+    ports: 27017

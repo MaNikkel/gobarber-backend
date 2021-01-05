@@ -56,3 +56,6 @@
 - O usuário não pode agendar em um horário já ocupado;
 - O usuário não pode agendar em um horário passado;
 - O usuário não pode agendar serviços consigo mesmo;
+
+docker container run --name gobarber_postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
+docker container run --name gobarber_mongo -p 27017:27017 -d -t mongo
