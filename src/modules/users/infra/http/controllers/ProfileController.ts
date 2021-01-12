@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UpdateProfileService from '@modules/users/services/UpdateProfileService';
 import { container } from 'tsyringe';
 import ShowProfileService from '@modules/users/services/ShowProfileService';
+import { classToClass } from 'class-transformer';
 
 export default class ProfileController {
   public async show(req: Request, res: Response): Promise<Response> {
@@ -9,9 +10,7 @@ export default class ProfileController {
       const user_id = req.user.id;
       const showProfile = container.resolve(ShowProfileService);
       const user = await showProfile.execute({ user_id });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...securedUser } = user;
-      return res.json(securedUser);
+      return res.json(classToClass(user));
     } catch (err) {
       return res.status(400).json({ error: err.message });
     }
@@ -29,9 +28,7 @@ export default class ProfileController {
         old_password,
         user_id,
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...securedUser } = user;
-      return res.json(securedUser);
+      return res.json(classToClass(user));
     } catch (err) {
       return res.status(400).json({ error: err.message });
     }

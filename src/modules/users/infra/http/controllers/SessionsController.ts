@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
 
 export default class SessionsController {
@@ -8,8 +9,6 @@ export default class SessionsController {
     const { email, password } = req.body;
     const authenticateUser = container.resolve(AuthenticateUserService);
     const { user, token } = await authenticateUser.execute({ email, password });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: p, ...securedUser } = user;
-    return res.json({ user: securedUser, token });
+    return res.json({ user: classToClass(user), token });
   }
 }
