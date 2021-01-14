@@ -59,3 +59,4 @@
 
 docker container run --name gobarber_postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
 docker container run --name gobarber_mongo -p 27017:27017 -d -t mongo
+docker container run --name gobarber_redis -p 6379:6379 -d -t redis:alpine
