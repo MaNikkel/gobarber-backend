@@ -14,6 +14,7 @@ import routes from '@shared/infra/http/routes';
 
 import '@shared/container';
 import '@shared/infra/typeorm';
+import rateLimiter from './middlewares/rateLimiter';
 
 const app = express();
 
@@ -30,6 +31,7 @@ const app = express();
 // Using handlers for tracing
 // app.use(Sentry.Handlers.requestHandler());
 // app.use(Sentry.Handlers.tracingHandler());
+app.use(rateLimiter);
 app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());

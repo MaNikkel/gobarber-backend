@@ -2,18 +2,14 @@ import 'reflect-metadata';
 import AppError from '@shared/errors/AppError';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 import AuthenticateUsersService from './AuthenticateUserService';
-import CreateUsersService from './CreateUserService';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 
 describe('AuthenticateUser', () => {
   it('should be able to authenticate user', async () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeHashProvider = new FakeHashProvider();
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-    await createUser.execute({
+
+    await fakeUsersRepository.create({
       email: 'email@teste.com',
       name: 'Teste TDD',
       password: '123123',
@@ -52,11 +48,7 @@ describe('AuthenticateUser', () => {
     const fakeUsersRepository = new FakeUsersRepository();
     const fakeHashProvider = new FakeHashProvider();
 
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-    await createUser.execute({
+    await fakeUsersRepository.create({
       email: 'email@teste.com',
       name: 'Teste TDD',
       password: '123123',
